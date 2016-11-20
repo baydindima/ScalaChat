@@ -27,5 +27,5 @@ object BoardActor {
   def apply() = board
 }
 
-case class Message(uuid: String, s: String)
+case class Message(nickname: String, msg: String)
 object Subscribe

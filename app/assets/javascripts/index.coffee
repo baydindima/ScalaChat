@@ -1,17 +1,11 @@
 $ ->
-  ws = new WebSocket $("body").data("ws-url")
-  ws.onmessage = (event) ->
-    message = JSON.parse event.data
-    switch message.type
-      when "message"
-        $("#board tbody").append("<tr><td>" + message.uid + "</td><td>" + message.msg + "</td></tr>")
-      else
-        console.log(message)
-
-  $("#msgform").submit (event) ->
+  $("#startchat").submit (event) ->
     event.preventDefault()
-    console.log($("#msgtext").val())
-    # send the message to watch the stock
-    ws.send(JSON.stringify({msg: $("#msgtext").val()}))
-    # reset the form
-    $("#msgtext").val("")
+
+    console.log($("#address").val())
+    console.log($("#nickname").val())
+    #    # send the message to watch the stock
+    window.location.replace(
+      "http://" + window.location.hostname + ":" + window.location.port +
+        "/chat?nickname=" + $("#nickname").val() + "&address=" + $("#address").val()
+    )

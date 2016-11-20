@@ -1,34 +1,40 @@
 package controllers
 
-import scala.Left
-import scala.Right
-import scala.concurrent.Future
-
-import actors.UserActor
+import actors.{BoardActor, Message, UserActor}
 import play.api.Logger
 import play.api.Play.current
 import play.api.libs.json.JsValue
-import play.api.mvc.Action
-import play.api.mvc.Controller
-import play.api.mvc.WebSocket
+import play.api.mvc.{Action, Controller, WebSocket}
+
+import scala.concurrent.Future
 
 object Application extends Controller {
-  val UID = "uid"
-  var counter = 0
+  val Nick = "nickname"
+  val Address = "address"
+  val Msg = "msg"
 
   def index = Action { implicit request =>
-    val uid: String = request.session.get(UID).getOrElse {
-      counter += 1
-      counter.toString
-    }
-    Logger.debug("creation uid " + uid)
-    Ok(views.html.index(uid)).withSession(request.session + (UID -> uid))
+    Ok(views.html.index.apply).withNewSession
+  }
+
+  def chat = Action { implicit request =>
+    Ok(views.html.chat(
+      request.queryString(Nick).head, request.queryString(Address).head)
+    ).withSession(request.session + (Nick -> request.queryString(Nick).head))
+  }
+
+  def message = Action { implicit req =>
+    val nick = req.body.asFormUrlEncoded.get.filter(_._1 == Nick).map(_._2.head).head
+    val msg = req.body.asFormUrlEncoded.get.filter(_._1 == Msg).map(_._2.head).head
+    BoardActor() ! Message(nick, msg)
+    Ok("Success")
   }
 
   def ws = WebSocket.tryAcceptWithActor[JsValue, JsValue] { implicit request =>
-    Future.successful(request.session.get(UID) match {
+    Future.successful(request.session.get(Nick) match {
       case None => Left(Forbidden)
-      case Some(uid) => Right(UserActor.props(uid))
+      case Some(nick) => Right(UserActor.props(nick))
     })
   }
+
 }
