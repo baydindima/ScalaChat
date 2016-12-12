@@ -13,6 +13,9 @@ class UserActor(nick: String, userId: Int, board: ActorRef, out: ActorRef) exten
 
   override def preStart() = {
     board ! Subscribe
+    import UserActor._
+    val js = Json.obj("type" -> "info", "img" -> userId % AvatarCount)
+    out ! userId
   }
 
   def receive = LoggingReceive {
