@@ -4,7 +4,7 @@ $ ->
     message = JSON.parse event.data
     switch message.type
       when "message"
-        $("#board tbody").append("<tr><td>" + message.nickname + "</td><td>" + message.msg + "</td></tr>")
+        $("#chatAndMessage").append("<div class=\"messageInChat\"><div class=\"messageClient\">" + message.nickname + ":" + message.msg + "</div></div>")
       else
         console.log(message)
 
@@ -13,6 +13,7 @@ $ ->
     console.log($("#msgtext").val())
     # send the message to watch the stock
     ws.send(JSON.stringify({msg: $("#msgtext").val()}))
+    $("#chatAndMessage").append("<div class=\"messageInChat\"><div class=\"messageManager\">" + $("#nickname").text() + ":" + $("#msgtext").val() + "</div></div>")
     $.post(
       "http://" + $("#address").text() + "/message",
       {nickname: $("#nickname").text(), msg: $("#msgtext").val()}
