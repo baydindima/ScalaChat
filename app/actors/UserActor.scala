@@ -9,20 +9,24 @@ import akka.actor.ActorRef
 import akka.actor.Props
 import scala.xml.Utility
 
-class UserActor(nick: String, board: ActorRef, out: ActorRef) extends Actor with ActorLogging {
+class UserActor(nick: String, userId: Int, board: ActorRef, out: ActorRef) extends Actor with ActorLogging {
+
   override def preStart() = {
     board ! Subscribe
   }
 
   def receive = LoggingReceive {
-    case Message(nickname, s) if sender == board =>
-      val js = Json.obj("type" -> "message", "nickname" -> nickname, "msg" -> s)
-      out ! js
+    case Message(nickname, id, s) if sender == board =>
+      import UserActor._
+      if (nickname != nick) {
+        val js = Json.obj("type" -> "message", "nickname" -> nickname, "msg" -> s, "img" -> id % AvatarCount)
+        out ! js
+      }
     case js: JsValue =>
       (js \ "msg").validate[String] map {
         Utility.escape
       } foreach {
-        board ! Message(nick, _)
+        board ! Message(nick, userId, _)
       }
     case other =>
       log.error("unhandled: " + other)
@@ -30,5 +34,11 @@ class UserActor(nick: String, board: ActorRef, out: ActorRef) extends Actor with
 }
 
 object UserActor {
-  def props(nick: String)(out: ActorRef) = Props(new UserActor(nick, BoardActor(), out))
+  val AvatarCount = 11
+  var userCount = 0
+
+  def props(nick: String)(out: ActorRef) = {
+    userCount += 1
+    Props(new UserActor(nick, userCount - 1, BoardActor(), out))
+  }
 }

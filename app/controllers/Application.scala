@@ -1,7 +1,6 @@
 package controllers
 
-import actors.{BoardActor, Message, UserActor}
-import play.api.Logger
+import actors.UserActor
 import play.api.Play.current
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, Controller, WebSocket}
@@ -23,13 +22,6 @@ object Application extends Controller {
     ).withSession(request.session + (Nick -> request.queryString(Nick).head))
   }
 
-  def message = Action { implicit req =>
-    val nick = req.body.asFormUrlEncoded.get.filter(_._1 == Nick).map(_._2.head).head
-    val msg = req.body.asFormUrlEncoded.get.filter(_._1 == Msg).map(_._2.head).head
-    BoardActor() ! Message(nick, msg)
-    Ok("Success")
-  }
-
   def ws = WebSocket.tryAcceptWithActor[JsValue, JsValue] { implicit request =>
     Future.successful(request.session.get(Nick) match {
       case None => Left(Forbidden)
@@ -38,3 +30,10 @@ object Application extends Controller {
   }
 
 }
+/**
+  * Standalone application
+  * Electron
+  * CoffeeScript -> ScalaJS
+  * Avatar
+  * Broadcast message
+  */

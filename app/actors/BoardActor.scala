@@ -13,7 +13,9 @@ class BoardActor extends Actor with ActorLogging {
 
   def receive = LoggingReceive {
     case m: Message =>
-      users foreach { _ ! m }
+      users foreach { user =>
+        user ! m
+      }
     case Subscribe =>
       users += sender
       context watch sender
@@ -23,9 +25,9 @@ class BoardActor extends Actor with ActorLogging {
 }
 
 object BoardActor {
-  lazy val board = Akka.system().actorOf(Props[BoardActor])
-  def apply() = board
+  lazy val board: ActorRef = Akka.system().actorOf(Props[BoardActor])
+  def apply(): ActorRef = board
 }
 
-case class Message(nickname: String, msg: String)
+case class Message(nickname: String, userId: Int, msg: String)
 object Subscribe

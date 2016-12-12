@@ -6,7 +6,5 @@ GET     /                           controllers.Application.index
 GET     /ws                         controllers.Application.ws
 GET     /chat                       controllers.Application.chat
 
-POST    /message                       controllers.Application.message
-
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
