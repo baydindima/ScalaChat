@@ -4,7 +4,7 @@ $ ->
     message = JSON.parse event.data
     switch message.type
       when "message"
-        $("#chatAndMessage").append("<div class=\"messageInChat\"><div class=\"messageClient\">" + message.nickname + ":" + message.msg + "</div></div>")
+        $("#chatAndMessage").append("<div class=\"messageInChat\"><div class=\"messageClient\">" + "<img src=\"" + "http://" + window.location.hostname + ":" + window.location.port + "/assets/images/" + message.img + ".png" + "\" height=\"20\" width=\"20\" />" + message.nickname + ":" + message.msg + "</div></div>")
       else
         console.log(message)
 

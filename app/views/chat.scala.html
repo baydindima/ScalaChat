@@ -21,7 +21,7 @@
         src='@routes.Assets.at("javascripts/chat.js")'></script>
     </head>
     <body data-ws-url="@routes.Application.ws().webSocketURL()" class="bg-primary" >
-        <div class="container " disabled>
+        <div class="container " disabled align="center">
             <div class="row" style="display:none" >
                 <div class="col-xs-12">
                     <table class="col-xs-12 table table-bordered info">
@@ -29,6 +29,7 @@
                             <tr>
                                 <th id="address" class="col-xs-3 text-center" >@address</th>
                                 <th id="nickname" class="col-xs-9" >@nickName</th>
+
                             </tr>
                         </thead>
                         <tbody>
@@ -51,7 +52,7 @@
                 @*</div>*@
             @*</div>*@
 
-            <div id="chatAndMessage">
+            <div id="chatAndMessage" align="center">
                 @*<div class="messageInChat">*@
                     @*<div class="messageClient">Здравствуйте, Вероника. Когда будет готов наш заказ</div>*@
                 @*</div>*@
